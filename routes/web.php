@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\LogController;
+use App\Http\Controllers\EquipmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +23,4 @@ Route::get('/', function () {
 
 Route::post('/logIn', [UserController::class, 'log_in']);
 Route::post('/logOut', [UserController::class, 'log_out']);
+Route::post('/addEquipment', [EquipmentController::class, 'add_equipment']);
