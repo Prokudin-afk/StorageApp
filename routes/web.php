@@ -1,10 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\EquipmentController;
+use App\Http\Controllers\PermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,4 +25,7 @@ Route::get('/', function () {
 
 Route::post('/logIn', [UserController::class, 'log_in']);
 Route::post('/logOut', [UserController::class, 'log_out']);
-Route::post('/addEquipment', [EquipmentController::class, 'add_equipment']);
+//Route::post('/addEquipment', [EquipmentController::class, 'add_equipment']);
+Route::post('/addEquipment', function(Request $request) {
+    return PermissionController::check_permission($_COOKIE['user_id'], 'addEquipment');
+});
