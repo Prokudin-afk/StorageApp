@@ -12,36 +12,29 @@
     
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     </head>
 <body>
     <ul>
-        @if(isset($_COOKIE['user_role']))
-            @if($_COOKIE['user_role'] =='provider')
-                <li onclick="$('#dvModalLogEq').modal('show')">
-                    Добавить оборудование
-                </li>
-                <li>
-                    Отчёт по оборудованию
-                </li>
-                <li onclick="log_out();">
-                    Выйти
-                </li>
-            @elseif($_COOKIE['user_role'] == 'manager')
-                <li>
-                    Переместить оборудование
-                </li>
-                <li>
-                    Отчёт по перемещённому оборудованию
-                </li>
-                <li onclick="log_out();">
-                    Выйти
-                </li>
-            @endif
-        @else
-            <li onclick="$('#dvModalLogIn').modal('show');">
-                Войти
-            </li>
-        @endif
+        <li onclick="$('#dvModalLogEq').modal('show')">
+            Добавить оборудование
+        </li>
+        <li>
+            Отчёт по добавленному мною оборудованию
+        </li>
+        <li>
+            Переместить оборудование
+        </li>
+        <li>
+            Отчёт по перемещённому оборудованию
+        </li>
+        <li onclick="log_out();">
+            Выйти
+        </li>
+        <li onclick="$('#dvModalLogIn').modal('show');">
+            Войти
+        </li>
     </ul>
 
 <!--Modals-->
@@ -112,6 +105,9 @@
         $.ajaxSetup({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
         });
+
+        //let user_token = String(<?php echo(isset($_COOKIE['token'])?$_COOKIE['token']:""); ?>);
+        let user_token = $.cookie('token')??'';
     });
 
     function log_in() {
@@ -136,7 +132,7 @@
                         break;
                     case 120: 
                         alert('Успешно');
-                        window.location.reload();
+                        <?php setcookie("token", 'hello', time() + 3600);?>
                         break;
                 }
             },
@@ -149,14 +145,7 @@
     }
 
     function log_out() {
-        $.ajax({
-            type: 'POST',
-            url:'/logOut',
-            dataType: 'json',
-            success: function() {
-                window.location.reload();
-            }
-        }); 
+        <?php setcookie("token", "none", time() - 3600);?>
     }
 
     function add_equipment() {
@@ -170,15 +159,13 @@
             url:'/addEquipment',
             dataType: 'json',
             data: {
+                token: user_token,
                 name: name,
                 cost: cost,
                 serial_num: serial,
                 inventory_num: inventory
             },
             success:function(data) {
-                /*switch(data['code']) {
-                    
-                }*/
                 console.log(data);
             },
             error: function (err) {

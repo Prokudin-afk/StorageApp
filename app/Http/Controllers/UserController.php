@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\User;
+use App\Http\Controllers\TokenController;
 
 class UserController extends Controller
 {
@@ -32,15 +33,22 @@ class UserController extends Controller
             return $result;
         }
 
-        setcookie("user_id", $user['id'], time() + 3600);
-        setcookie("user_role", $user['role'], time() + 3600);
+
+        TokenController::remove_user_tokens($user['id']);       //удалим старые токены
+        $result['token'] = TokenController::create_user_token($user['id']);     //сделаем новый
         $result['code'] = 120;
         return $result;
     }
 
-    public function log_out(Request $request) {
-        setcookie ("user_id", "", time() - 3600);
-        setcookie ("user_role", "", time() - 3600);
-        return true;
+    public function get_user_by_token($token) {
+        return $this->select_user_by_token($token);
+    }
+
+    private function select_user_by_token($token) {
+        User::select('users.id', 'roles.name')
+            ->join('roles', 'roles.id', '=', 'users.role_id')
+            ->join('user_tokens', 'user_tokens.user_id', '=', 'users.id')
+            ->where('user_tokens.token', $token)
+            ->first();
     }
 }

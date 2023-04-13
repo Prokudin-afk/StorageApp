@@ -24,8 +24,8 @@ Route::get('/', function () {
 });
 
 Route::post('/logIn', [UserController::class, 'log_in']);
-Route::post('/logOut', [UserController::class, 'log_out']);
 //Route::post('/addEquipment', [EquipmentController::class, 'add_equipment']);
 Route::post('/addEquipment', function(Request $request) {
-    return PermissionController::check_permission($_COOKIE['user_id'], 'addEquipment');
+    return $request->token;
+    return PermissionController::check_permission($request->token, 'addEquipment');
 });
