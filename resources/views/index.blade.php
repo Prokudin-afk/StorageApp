@@ -18,7 +18,7 @@
         <li onclick="$('#dvModalLogEq').modal('show')">
             Добавить оборудование
         </li>
-        <li>
+        <li onclick="$('#dvModalShowEquipment').modal('show')">
             Отчёт по добавленному мною оборудованию
         </li>
         <li>
@@ -93,6 +93,37 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="dvModalShowEquipment" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Отчёт по оборудованию</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Наименование</label>
+                    <select class="form-select" id="selectShowEqField">
+                        <option value="all" selected>Всё оборудование</option>
+                        <option value="regDesc">Дата регистрации убывание</option>
+                        <option value="regAsc">Дата регистрации Возрастание</option>
+                        <option value="costDesc">Стоимость возрастание</option>
+                        <option value="costAsc">Стоимость убывание</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Значение</label>
+                    <input type="text" class="form-control" id="inpShowEqValue">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary" onclick="show_my_equipment()">Отчёт</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!--Modals-->
 </body>
 </html>
@@ -160,6 +191,30 @@
                 cost: cost,
                 serial_num: serial,
                 inventory_num: inventory
+            },
+            success:function(data) {
+                console.log(data);
+            },
+            error: function (err) {
+                if (err.status == 422) {
+                    console.log(err.responseJSON);
+                }
+            }
+        });
+    }
+
+    function show_my_equipment() {
+        let field = $('#selectShowEqField').val();
+        let value = $('#inpShowEqValue').val();
+
+        $.ajax({
+            type: 'POST',
+            url:'/showUserEquipment',
+            dataType: 'json',
+            data: {
+                token: $('#ulNav').data('cookieToken'),
+                field: field,
+                value: value
             },
             success:function(data) {
                 console.log(data);
