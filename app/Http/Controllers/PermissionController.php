@@ -13,7 +13,7 @@ class PermissionController extends Controller
 {
     public static function check_permission($token, $permission) {
         $user = UserController::get_user_by_token($token);
-        
+
         $permission = User::select('users.login')
             ->join('roles', 'roles.id', '=', 'users.role_id')
             ->join('role_permissions', 'role_permissions.role_id', '=', 'roles.id')
@@ -22,6 +22,6 @@ class PermissionController extends Controller
             ->where('permissions.name', $permission)
             ->get();
 
-        return !!$permission;
+        return $permission;
     }
 }

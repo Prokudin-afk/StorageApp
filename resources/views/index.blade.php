@@ -12,11 +12,9 @@
     
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-
-        <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     </head>
 <body>
-    <ul>
+    <ul id="ulNav">
         <li onclick="$('#dvModalLogEq').modal('show')">
             Добавить оборудование
         </li>
@@ -105,9 +103,6 @@
         $.ajaxSetup({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
         });
-
-        //let user_token = String(<?php echo(isset($_COOKIE['token'])?$_COOKIE['token']:""); ?>);
-        let user_token = $.cookie('token')??'';
     });
 
     function log_in() {
@@ -119,6 +114,7 @@
             url:'/logIn',
             dataType: 'json',
             data: {
+                token: $('#ulNav').data('cookieToken'),
                 login: login,
                 pass: pass
             },
@@ -132,7 +128,7 @@
                         break;
                     case 120: 
                         alert('Успешно');
-                        <?php setcookie("token", 'hello', time() + 3600);?>
+                        $('#ulNav').data('cookieToken', data['token']);
                         break;
                 }
             },
@@ -145,7 +141,7 @@
     }
 
     function log_out() {
-        <?php setcookie("token", "none", time() - 3600);?>
+        $('#ulNav').data('cookieToken', '');
     }
 
     function add_equipment() {
@@ -159,7 +155,7 @@
             url:'/addEquipment',
             dataType: 'json',
             data: {
-                token: user_token,
+                token: $('#ulNav').data('cookieToken'),
                 name: name,
                 cost: cost,
                 serial_num: serial,

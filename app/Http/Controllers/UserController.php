@@ -40,12 +40,8 @@ class UserController extends Controller
         return $result;
     }
 
-    public function get_user_by_token($token) {
-        return $this->select_user_by_token($token);
-    }
-
-    private function select_user_by_token($token) {
-        User::select('users.id', 'roles.name')
+    public static function get_user_by_token($token) {
+        return User::select('users.id')
             ->join('roles', 'roles.id', '=', 'users.role_id')
             ->join('user_tokens', 'user_tokens.user_id', '=', 'users.id')
             ->where('user_tokens.token', $token)

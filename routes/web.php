@@ -24,8 +24,5 @@ Route::get('/', function () {
 });
 
 Route::post('/logIn', [UserController::class, 'log_in']);
-//Route::post('/addEquipment', [EquipmentController::class, 'add_equipment']);
-Route::post('/addEquipment', function(Request $request) {
-    return $request->token;
-    return PermissionController::check_permission($request->token, 'addEquipment');
-});
+Route::post('/addEquipment', [EquipmentController::class, 'add_equipment']);
+Route::post('/showUserEquipment', [EquipmentController::class, 'show_user_equipment']);
